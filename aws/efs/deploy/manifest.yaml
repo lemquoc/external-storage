@@ -4,19 +4,22 @@ kind: ConfigMap
 metadata:
   name: efs-provisioner
 data:
-  file.system.id: yourEFSsystemid
-  aws.region: regionyourEFSisin
+  file.system.id: fs-0989eacf434064e2b
+  aws.region: us-west-2
   provisioner.name: example.com/aws-efs
   dns.name: ""
 ---
 kind: Deployment
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 metadata:
   name: efs-provisioner
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: efs-provisioner
   strategy:
-    type: Recreate 
+    type: Recreate
   template:
     metadata:
       labels:
@@ -53,7 +56,7 @@ spec:
       volumes:
         - name: pv-volume
           nfs:
-            server: yourEFSsystemID.efs.yourEFSregion.amazonaws.com
+            server: fs-0989eacf434064e2b.efs.us-west-2.amazonaws.com
             path: /
 ---
 kind: StorageClass
